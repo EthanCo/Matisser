@@ -1,51 +1,65 @@
-/*
- * Copyright 2017 Zhihu Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.zhihu.matisse;
+package com.heiko.matisser;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.ui.MatisseActivity;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Entry for Matisse's media selection.
+ * Matisse 包装类
+ *
+ * @author Heiko
+ * @date 2019/5/14
  */
-public final class Matisse {
+public class Matisser {
+    public static final int REQUEST_PERMISSION = 1288;
+    private Matisse impl;
+    private static PermissionCallback permissionCallback;
 
-    private final WeakReference<Activity> mContext;
-    private final WeakReference<Fragment> mFragment;
-
-    private Matisse(Activity activity) {
-        this(activity, null);
+    public interface PermissionCallback {
+        void onGetPermission();
     }
 
-    private Matisse(Fragment fragment) {
-        this(fragment.getActivity(), fragment);
+    /**
+     * 请求权限
+     *
+     * @param activity
+     */
+    public static void requestPermission(Activity activity, PermissionCallback callback) {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (callback != null) {
+                permissionCallback = callback;
+            }
+            ActivityCompat.requestPermissions(activity, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+        } else {
+            if (callback != null) {
+                callback.onGetPermission();
+            }
+        }
     }
 
-    private Matisse(Activity activity, Fragment fragment) {
-        mContext = new WeakReference<>(activity);
-        mFragment = new WeakReference<>(fragment);
+    private Matisser(Activity activity) {
+        impl = Matisse.from(activity);
+    }
+
+    private Matisser(Fragment fragment) {
+        impl = Matisse.from(fragment);
     }
 
     /**
@@ -57,8 +71,8 @@ public final class Matisse {
      * @param activity Activity instance.
      * @return Matisse instance.
      */
-    public static Matisse from(Activity activity) {
-        return new Matisse(activity);
+    public static Matisser from(Activity activity) {
+        return new Matisser(activity);
     }
 
     /**
@@ -70,8 +84,8 @@ public final class Matisse {
      * @param fragment Fragment instance.
      * @return Matisse instance.
      */
-    public static Matisse from(Fragment fragment) {
-        return new Matisse(fragment);
+    public static Matisser from(Fragment fragment) {
+        return new Matisser(fragment);
     }
 
     /**
@@ -113,11 +127,11 @@ public final class Matisse {
      * Types not included in the set will still be shown in the grid but can't be chosen.
      *
      * @param mimeTypes MIME types set user can choose from.
-     * @return {@link SelectionCreator} to build select specifications.
+     * @return {@link SelectionCreatorWrap} to build select specifications.
      * @see MimeType
-     * @see SelectionCreator
+     * @see SelectionCreatorWrap
      */
-    public SelectionCreator choose(Set<MimeType> mimeTypes) {
+    public SelectionCreatorWrap choose(Set<MimeType> mimeTypes) {
         return this.choose(mimeTypes, true);
     }
 
@@ -130,22 +144,37 @@ public final class Matisse {
      * @param mediaTypeExclusive Whether can choose images and videos at the same time during one single choosing
      *                           process. true corresponds to not being able to choose images and videos at the same
      *                           time, and false corresponds to being able to do this.
-     * @return {@link SelectionCreator} to build select specifications.
+     * @return {@link SelectionCreatorWrap} to build select specifications.
      * @see MimeType
-     * @see SelectionCreator
+     * @see SelectionCreatorWrap
      */
-    public SelectionCreator choose(Set<MimeType> mimeTypes, boolean mediaTypeExclusive) {
-        return new SelectionCreator(this, mimeTypes, mediaTypeExclusive);
+    public SelectionCreatorWrap choose(Set<MimeType> mimeTypes, boolean mediaTypeExclusive) {
+        return new SelectionCreatorWrap(impl, mimeTypes, mediaTypeExclusive);
     }
 
     @Nullable
-    public Activity getActivity() {
-        return mContext.get();
+    Activity getActivity() {
+        return impl.getActivity();
     }
 
     @Nullable
-    public Fragment getFragment() {
-        return mFragment != null ? mFragment.get() : null;
+    Fragment getFragment() {
+        return impl.getFragment();
     }
 
+
+    public static boolean onRequestPermissionsResult(Context context,int requestCode, String[] permissions, int[] grantResults) {
+
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (permissionCallback != null) {
+                    permissionCallback.onGetPermission();
+                }
+            } else {
+                Toast.makeText(context, "需要权限", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+        return false;
+    }
 }

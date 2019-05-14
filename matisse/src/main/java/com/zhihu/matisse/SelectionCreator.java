@@ -60,8 +60,8 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
  * Fluent API for building media select specification.
  */
 @SuppressWarnings("unused")
-public final class SelectionCreator {
-    private final Matisse mMatisse;
+public class SelectionCreator {
+    protected final Matisse mMatisse;
     private final SelectionSpec mSelectionSpec;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -93,7 +93,7 @@ public final class SelectionCreator {
      * @param matisse   a requester context wrapper.
      * @param mimeTypes MIME type set to select.
      */
-    SelectionCreator(Matisse matisse, @NonNull Set<MimeType> mimeTypes, boolean mediaTypeExclusive) {
+    protected SelectionCreator(Matisse matisse, @NonNull Set<MimeType> mimeTypes, boolean mediaTypeExclusive) {
         mMatisse = matisse;
         mSelectionSpec = SelectionSpec.getCleanInstance();
         mSelectionSpec.mimeTypeSet = mimeTypes;

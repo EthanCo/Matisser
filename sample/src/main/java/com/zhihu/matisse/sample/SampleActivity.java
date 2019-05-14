@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.heiko.matisser.Matisser;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -57,6 +58,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
         findViewById(R.id.zhihu).setOnClickListener(this);
         findViewById(R.id.dracula).setOnClickListener(this);
+        findViewById(R.id.matisser).setOnClickListener(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -65,6 +67,21 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(final View v) {
+        if (v.getId() == R.id.matisser) {
+            //Matisser.requestPermission(SampleActivity.this);
+            Matisser.from(SampleActivity.this)
+                    .choose(MimeType.ofImage())
+                    .theme(R.style.Matisse_Dracula)
+                    .countable(false)
+                    .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                    .maxSelectable(9)
+                    .originalEnable(true)
+                    .maxOriginalSize(10)
+                    .imageEngine(new PicassoEngine())
+                    .forResult(REQUEST_CODE_CHOOSE);
+            return;
+        }
+
         RxPermissions rxPermissions = new RxPermissions(this);
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new Observer<Boolean>() {
@@ -83,7 +100,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                                             .countable(true)
                                             .capture(true)
                                             .captureStrategy(
-                                                    new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider","test"))
+                                                    new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"))
                                             .maxSelectable(9)
                                             .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                                             .gridExpectedSize(
@@ -154,6 +171,13 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean result = Matisser.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        if (result) return;
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
