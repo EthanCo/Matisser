@@ -1,6 +1,7 @@
 package com.heiko.matisser;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -130,5 +131,31 @@ public class Matisser {
     @Nullable
     Fragment getFragment() {
         return impl.getFragment();
+    }
+
+    private static Responsibility responsibility;
+
+    public static void addHandler(Responsibility _responsibility) {
+        if (responsibility == null) {
+            responsibility = _responsibility;
+        } else {
+            responsibility.setNext(_responsibility);
+            responsibility = _responsibility;
+        }
+    }
+
+    public static void handleResult(Context context, String url, final Responsibility onhandle) {
+        if (responsibility == null) {
+            onhandle.handleRequest(url, context);
+        } else {
+            responsibility.setNext(new Responsibility() {
+                @Override
+                public void handleRequest(String request, Context context) {
+                    onhandle.handleRequest(request, context);
+                    responsibility.setNext(null);
+                }
+            });
+            responsibility.handleRequest(url, context);
+        }
     }
 }
