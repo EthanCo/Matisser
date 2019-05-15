@@ -5,6 +5,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -37,19 +39,22 @@ public class SelectionCreatorWrap extends SelectionCreator {
     @Override
     public void forResult(final int requestCode) {
         if (isMarshmallow()) {
-            /*Matisser.requestPermission(mMatisse.getActivity(), new Matisser.PermissionCallback() {
-                @Override
-                public void onGetPermission() {
-                    SelectionCreatorWrap.super.forResult(requestCode);
-                }
-            });*/
             mRxPermissionsFragment = getLazySingleton(((FragmentActivity) mMatisse.getActivity()).getSupportFragmentManager());
             if (mRxPermissionsFragment.get().isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 SelectionCreatorWrap.super.forResult(requestCode);
-            } else if (mRxPermissionsFragment.get().isRevoked(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                mRxPermissionsFragment.get().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
             } else {
-                mRxPermissionsFragment.get().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
+                mRxPermissionsFragment.get().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionsFragment.PermissionCallback() {
+                    @Override
+                    public void onRequestPermissionsResult(String[] permissions, int[] grantResults, boolean[] shouldShowRequestPermissionRationale) {
+                        if (permissions == null || permissions.length == 0) return;
+                        if (grantResults[0] == 0) {
+                            SelectionCreatorWrap.super.forResult(requestCode);
+                        } else {
+                            Toast.makeText(mMatisse.getActivity(), "需要权限", Toast.LENGTH_SHORT).show();
+                        }
+                        Log.i("Matisser", "permissions:" + permissions[0] + " grantResults:" + grantResults[0] + " shouldShowRequestPermissionRationale:" + shouldShowRequestPermissionRationale[0]);
+                    }
+                });
             }
         } else {
             SelectionCreatorWrap.super.forResult(requestCode);

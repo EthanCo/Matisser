@@ -1,16 +1,10 @@
 package com.heiko.matisser;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -28,31 +22,7 @@ import java.util.Set;
 public class Matisser {
     public static final int REQUEST_PERMISSION = 1288;
     private Matisse impl;
-    private static PermissionCallback permissionCallback;
 
-    public interface PermissionCallback {
-        void onGetPermission();
-    }
-
-    /**
-     * 请求权限
-     *
-     * @param activity
-     */
-    public static void requestPermission(Activity activity, PermissionCallback callback) {
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (callback != null) {
-                permissionCallback = callback;
-            }
-            ActivityCompat.requestPermissions(activity, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
-        } else {
-            if (callback != null) {
-                callback.onGetPermission();
-            }
-        }
-    }
 
     private Matisser(Activity activity) {
         impl = Matisse.from(activity);
@@ -160,21 +130,5 @@ public class Matisser {
     @Nullable
     Fragment getFragment() {
         return impl.getFragment();
-    }
-
-
-    public static boolean onRequestPermissionsResult(Context context,int requestCode, String[] permissions, int[] grantResults) {
-
-        if (requestCode == REQUEST_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (permissionCallback != null) {
-                    permissionCallback.onGetPermission();
-                }
-            } else {
-                Toast.makeText(context, "需要权限", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }
-        return false;
     }
 }

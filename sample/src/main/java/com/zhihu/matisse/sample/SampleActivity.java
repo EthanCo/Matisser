@@ -173,13 +173,6 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean result = Matisser.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-        if (result) return;
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
 
         private List<Uri> mUris;
