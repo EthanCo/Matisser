@@ -14,7 +14,7 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 /**
- * TODO
+ * LubanRRRR
  *
  * @author Heiko
  * @date 2019/5/15
@@ -22,7 +22,7 @@ import top.zibin.luban.OnCompressListener;
 public class LubanRRRR extends Responsibility {
 
     @Override
-    public void handleRequest(final String request, final Activity activity) {
+    public void handleRequest(final int position, final String request, final Activity activity) {
         File file = new File(request);
         Log.i("OnActivityResult ", "file.size:" + file.length());
         Luban.with(activity)
@@ -45,14 +45,14 @@ public class LubanRRRR extends Responsibility {
                     public void onSuccess(File file) {
                         // TODO 压缩成功后调用，返回压缩后的图片文件
                         Log.i("OnActivityResult", "Luban压缩成功:" + file.toString() + " file.size:" + file.length());
-                        getNext().handleRequest(file.getPath(), activity);
+                        getNext().handleRequest(position, file.getPath(), activity);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         // TODO 当压缩过程出现问题时调用
                         Log.e("OnActivityResult", "Luban压缩失败:" + e.getMessage());
-                        getNext().handleRequest(request, activity);
+                        getNext().handleRequest(position, request, activity);
                     }
                 }).launch();
     }

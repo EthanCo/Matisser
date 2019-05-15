@@ -15,9 +15,9 @@ public abstract class Responsibility {
     }
 
     //处理请求的方法
-    public abstract void handleRequest(String request, Activity activity);
+    public abstract void handleRequest(int position, String request, Activity activity);
 
-    public boolean onActivityResult(Activity activity,int requestCode, int resultCode, Intent data) {
+    public boolean onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         return false;
     }
 }

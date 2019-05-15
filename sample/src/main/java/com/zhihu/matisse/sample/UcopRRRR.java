@@ -11,6 +11,8 @@ import com.heiko.matisser.Responsibility;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * UcopRRRR
@@ -19,37 +21,53 @@ import java.io.File;
  * @date 2019/5/15
  */
 public class UcopRRRR extends Responsibility {
-    private String resultPath;
-    private String targetPath;
+    public static final int BASE_REQUEST_CODE = 35960;
+    private Map<Integer, String> resultPaths = new HashMap<>();
+    private Map<Integer, String> targetPaths = new HashMap<>();
 
     @Override
-    public void handleRequest(String request, Activity activity) {
-        File file_temp = new File(getCachePath(activity), "ucrop_temp.jpeg");
-        Uri resultUri = Uri.fromFile(new File(request));
-        Uri targetUri = Uri.fromFile(file_temp);
-        resultPath = request;
-        targetPath = file_temp.getPath();
+    public void handleRequest(int position, String request, Activity activity) {
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                LoadingDialog.dismiss();
+            }
+        }, 1000);*/
+        Log.i("OnActivityResult", "handleRequest>>> request:" + request);
+        File requestFile = new File(request);
+        File targetFile = new File(getCachePath(activity), position + requestFile.getName());
+        Uri resultUri = Uri.fromFile(requestFile);
+        Uri targetUri = Uri.fromFile(targetFile);
+        resultPaths.put(position, request);
+        targetPaths.put(position, targetFile.getPath());
         UCrop.of(resultUri, targetUri)
-                .withAspectRatio(16, 9)
+                .withAspectRatio(9,16)
                 .withMaxResultSize(648, 1152)
-                .start(activity);
+                .start(activity, BASE_REQUEST_CODE + position);
     }
 
     @Override
     public boolean onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            final Uri resultUri = UCrop.getOutput(data);
-            Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
-            getNext().handleRequest(targetPath, activity);
-            return true;
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
-            Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
-            getNext().handleRequest(resultPath, activity);
-            return true;
-        } else {
-            return super.onActivityResult(activity, requestCode, resultCode, data);
+        Log.i("OnActivityResult", "onActivityResult>>> requestCode:" + requestCode);
+        int position = requestCode - BASE_REQUEST_CODE;
+        if (position >= 0 && (position) <= 9) {
+            if (resultCode == Activity.RESULT_OK) {
+                final Uri resultUri = UCrop.getOutput(data);
+                Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
+                String targetPath = targetPaths.get(position);
+                getNext().handleRequest(position, targetPath, activity);
+                return true;
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                final Throwable cropError = UCrop.getError(data);
+                Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
+                String resultPath = resultPaths.get(position);
+                getNext().handleRequest(position, resultPath, activity);
+                return true;
+            } else {
+                return super.onActivityResult(activity, requestCode, resultCode, data);
+            }
         }
+        return false;
     }
 
     /**

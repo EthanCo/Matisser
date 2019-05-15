@@ -1,6 +1,5 @@
 package com.zhihu.matisse.sample;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.heiko.matisser.Matisser;
-import com.heiko.matisser.Responsibility;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
@@ -78,12 +76,11 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
             } else {
                 Log.i("OnActivityResult ", "file.size:" + file.length());
             }
-            Matisser.handleResult(this, paths.get(0), new Responsibility() {
+            Matisser.handleResult(this, paths, new Matisser.ResultH() {
                 @Override
-                public void handleRequest(String request, Activity activity) {
-                    File file = new File(request);
-                    Log.i("OnActivityResult", "handleRequest:" + request + " file.size:" + file.length());
+                public void onHandle(List<String> urls) {
                     Toast.makeText(MatisserSampleActivity.this, "handleRequest", Toast.LENGTH_SHORT).show();
+                    Log.i("OnActivityResult ", "onHandle urls:" + urls);
                 }
             });
 

@@ -10,6 +10,7 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.ui.MatisseActivity;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -133,28 +134,47 @@ public class Matisser {
     }
 
     private static Responsibility responsibility;
+    private static Responsibility responsibilityNext;
 
     public static void addHandler(Responsibility _responsibility) {
         if (responsibility == null) {
             responsibility = _responsibility;
-        } else {
+        } else if (responsibility.getNext() == null) {
             responsibility.setNext(_responsibility);
-            responsibility = _responsibility;
+            responsibilityNext = _responsibility;
+        } else {
+            responsibilityNext.setNext(_responsibility);
+            responsibilityNext = _responsibility;
         }
     }
 
-    public static void handleResult(Activity activity, String url, final Responsibility onhandle) {
+    public interface ResultH {
+        void onHandle(List<String> urls);
+    }
+
+    public static void handleResult(Activity activity, final List<String> urls, final ResultH onhandle) {
+        if (urls == null) return;
+        final String[] resultUrls = new String[urls.size()];
+        final int[] resultCount = new int[]{0};
+
         if (responsibility == null) {
-            onhandle.handleRequest(url, activity);
+            onhandle.onHandle(urls);
         } else {
-            responsibility.setNext(new Responsibility() {
+            final Responsibility operateResponsibility = responsibility.getNext() == null ? responsibility : responsibilityNext;
+            operateResponsibility.setNext(new Responsibility() {
                 @Override
-                public void handleRequest(String request, Activity activity) {
-                    onhandle.handleRequest(request, activity);
-                    responsibility.setNext(null);
+                public void handleRequest(int index, String request, Activity activity) {
+                    resultCount[0]++;
+                    resultUrls[index] = request;
+                    if (resultCount[0] >= resultUrls.length) {
+                        onhandle.onHandle(Arrays.asList(resultUrls));
+                        operateResponsibility.setNext(null);
+                    }
                 }
             });
-            responsibility.handleRequest(url, activity);
+            for (int i = 0; i < urls.size(); i++) {
+                responsibility.handleRequest(i, urls.get(i), activity);
+            }
         }
     }
 
