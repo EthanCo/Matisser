@@ -3,7 +3,6 @@ package com.zhihu.matisse.sample;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.heiko.matisser.Matisser;
 import com.heiko.matisser.Responsibility;
-import com.yalantis.ucrop.UCrop;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
@@ -64,6 +62,9 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (Matisser.onActivityResult(this, requestCode, resultCode, data)) return;
+
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             List<String> paths = Matisser.obtainPathResult(data);
             mAdapter.setData(Matisser.obtainResult(data), paths);
@@ -106,30 +107,25 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
                     .withMaxResultSize(2304, 1728)
                     .withOptions(options)
                     .start(this);*/
-        } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            final Uri resultUri = UCrop.getOutput(data);
-            Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
-            Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
         }
     }
 
     /**
      * 获取app缓存路径
+     *
      * @param context
      * @return
      */
-    public String getCachePath( Context context ){
-        String cachePath ;
+    public String getCachePath(Context context) {
+        String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             //外部存储可用
-            cachePath = context.getExternalCacheDir().getPath() ;
-        }else {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
             //外部存储不可用
-            cachePath = context.getCacheDir().getPath() ;
+            cachePath = context.getCacheDir().getPath();
         }
-        return cachePath ;
+        return cachePath;
     }
 }

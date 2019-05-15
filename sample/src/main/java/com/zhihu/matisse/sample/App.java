@@ -11,6 +11,7 @@ import com.heiko.matisser.Matisser;
  * @date 2019/5/15
  */
 public class App extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();

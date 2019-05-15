@@ -1,6 +1,7 @@
 package com.heiko.matisser;
 
 import android.app.Activity;
+import android.content.Intent;
 
 public abstract class Responsibility {
     private Responsibility next;
@@ -15,4 +16,8 @@ public abstract class Responsibility {
 
     //处理请求的方法
     public abstract void handleRequest(String request, Activity activity);
+
+    public boolean onActivityResult(Activity activity,int requestCode, int resultCode, Intent data) {
+        return false;
+    }
 }

@@ -157,4 +157,21 @@ public class Matisser {
             responsibility.handleRequest(url, activity);
         }
     }
+
+    public static boolean onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        if (responsibility == null) return false;
+        return handleActivityResult(responsibility, activity, requestCode, resultCode, data);
+    }
+
+    private static boolean handleActivityResult(Responsibility responsibility, Activity activity, int requestCode, int resultCode, Intent data) {
+        boolean result = responsibility.onActivityResult(activity, requestCode, resultCode, data);
+        if (!result) {
+            if (responsibility.getNext() != null) {
+                return handleActivityResult(responsibility.getNext(), activity, requestCode, resultCode, data);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 }
