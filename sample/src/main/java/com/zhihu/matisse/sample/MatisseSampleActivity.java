@@ -25,13 +25,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.heiko.matisser.Matisser;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -46,7 +42,10 @@ import java.util.List;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * Matisse原本的Sample
+ */
+public class MatisseSampleActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
 
@@ -55,10 +54,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_matisse_sample);
         findViewById(R.id.zhihu).setOnClickListener(this);
         findViewById(R.id.dracula).setOnClickListener(this);
-        findViewById(R.id.matisser).setOnClickListener(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -67,21 +65,6 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(final View v) {
-        if (v.getId() == R.id.matisser) {
-            //Matisser.requestPermission(SampleActivity.this);
-            Matisser.from(SampleActivity.this)
-                    .choose(MimeType.ofImage())
-                    .theme(R.style.Matisse_Dracula)
-                    .countable(false)
-                    .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                    .maxSelectable(9)
-                    .originalEnable(true)
-                    .maxOriginalSize(10)
-                    .imageEngine(new PicassoEngine())
-                    .forResult(REQUEST_CODE_CHOOSE);
-            return;
-        }
-
         RxPermissions rxPermissions = new RxPermissions(this);
         rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new Observer<Boolean>() {
@@ -95,7 +78,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         if (aBoolean) {
                             switch (v.getId()) {
                                 case R.id.zhihu:
-                                    Matisse.from(SampleActivity.this)
+                                    Matisse.from(MatisseSampleActivity.this)
                                             .choose(MimeType.ofAll(), false)
                                             .countable(true)
                                             .capture(true)
@@ -131,7 +114,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                                             .forResult(REQUEST_CODE_CHOOSE);
                                     break;
                                 case R.id.dracula:
-                                    Matisse.from(SampleActivity.this)
+                                    Matisse.from(MatisseSampleActivity.this)
                                             .choose(MimeType.ofImage())
                                             .theme(R.style.Matisse_Dracula)
                                             .countable(false)
@@ -147,7 +130,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                             }
                             mAdapter.setData(null, null);
                         } else {
-                            Toast.makeText(SampleActivity.this, R.string.permission_request_denied, Toast.LENGTH_LONG)
+                            Toast.makeText(MatisseSampleActivity.this, R.string.permission_request_denied, Toast.LENGTH_LONG)
                                     .show();
                         }
                     }
@@ -172,49 +155,4 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
     }
-
-    private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
-
-        private List<Uri> mUris;
-        private List<String> mPaths;
-
-        void setData(List<Uri> uris, List<String> paths) {
-            mUris = uris;
-            mPaths = paths;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public UriViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new UriViewHolder(
-                    LayoutInflater.from(parent.getContext()).inflate(R.layout.uri_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(UriViewHolder holder, int position) {
-            holder.mUri.setText(mUris.get(position).toString());
-            holder.mPath.setText(mPaths.get(position));
-
-            holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
-            holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mUris == null ? 0 : mUris.size();
-        }
-
-        static class UriViewHolder extends RecyclerView.ViewHolder {
-
-            private TextView mUri;
-            private TextView mPath;
-
-            UriViewHolder(View contentView) {
-                super(contentView);
-                mUri = (TextView) contentView.findViewById(R.id.uri);
-                mPath = (TextView) contentView.findViewById(R.id.path);
-            }
-        }
-    }
-
 }
