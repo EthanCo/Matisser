@@ -133,57 +133,59 @@ public class Matisser {
         return impl.getFragment();
     }
 
-    private static Responsibility responsibility;
-    private static Responsibility responsibilityNext;
+    private static Transactor transactor;
+    private static Transactor transactorNext;
 
-    public static void addHandler(Responsibility _responsibility) {
-        if (responsibility == null) {
-            responsibility = _responsibility;
-        } else if (responsibility.getNext() == null) {
-            responsibility.setNext(_responsibility);
-            responsibilityNext = _responsibility;
+    public static void addTransactor(Transactor _responsibility) {
+        if (transactor == null) {
+            transactor = _responsibility;
+        } else if (transactor.getNext() == null) {
+            transactor.setNext(_responsibility);
+            transactorNext = _responsibility;
         } else {
-            responsibilityNext.setNext(_responsibility);
-            responsibilityNext = _responsibility;
+            transactorNext.setNext(_responsibility);
+            transactorNext = _responsibility;
         }
     }
 
-    public interface ResultH {
-        void onHandle(List<String> urls);
+    public interface HandleResult {
+        void onResult(List<String> urls);
     }
 
-    public static void handleResult(Activity activity, String type, final List<String> urls, final ResultH onhandle) {
+    public static void handleResult(Activity activity, String type, final List<String> urls, final HandleResult handleResult) {
         if (urls == null) return;
         final String[] resultUrls = new String[urls.size()];
         final int[] resultCount = new int[]{0};
 
-        if (responsibility == null) {
-            onhandle.onHandle(urls);
+        if (transactor == null) {
+            handleResult.onResult(urls);
         } else {
-            final Responsibility operateResponsibility = responsibility.getNext() == null ? responsibility : responsibilityNext;
-            operateResponsibility.setNext(new Responsibility() {
+            final Transactor operateTransactor = transactor.getNext() == null ? transactor : transactorNext;
+            operateTransactor.setNext(new Transactor() {
                 @Override
-                public void handleRequest(String type, int index, String request, Activity activity) {
+                public void handle(Matter matter, Activity activity) {
                     resultCount[0]++;
-                    resultUrls[index] = request;
+                    resultUrls[matter.getPosition()] = matter.getRequest();
                     if (resultCount[0] >= resultUrls.length) {
-                        onhandle.onHandle(Arrays.asList(resultUrls));
-                        operateResponsibility.setNext(null);
+                        handleResult.onResult(Arrays.asList(resultUrls));
+                        operateTransactor.setNext(null);
                     }
                 }
             });
+            Matter matter;
             for (int i = 0; i < urls.size(); i++) {
-                responsibility.handleRequest(type, i, urls.get(i), activity);
+                matter = new Matter(i, urls.get(i), type);
+                transactor.handle(matter, activity);
             }
         }
     }
 
     public static boolean onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (responsibility == null) return false;
-        return handleActivityResult(responsibility, activity, requestCode, resultCode, data);
+        if (transactor == null) return false;
+        return handleActivityResult(transactor, activity, requestCode, resultCode, data);
     }
 
-    private static boolean handleActivityResult(Responsibility responsibility, Activity activity, int requestCode, int resultCode, Intent data) {
+    private static boolean handleActivityResult(Transactor responsibility, Activity activity, int requestCode, int resultCode, Intent data) {
         boolean result = responsibility.onActivityResult(activity, requestCode, resultCode, data);
         if (!result) {
             if (responsibility.getNext() != null) {

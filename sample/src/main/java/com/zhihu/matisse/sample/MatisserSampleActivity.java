@@ -76,9 +76,9 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
             } else {
                 Log.i("OnActivityResult ", "file.size:" + file.length());
             }
-            Matisser.handleResult(this,"sample", paths, new Matisser.ResultH() {
+            Matisser.handleResult(this,"sample", paths, new Matisser.HandleResult() {
                 @Override
-                public void onHandle(List<String> urls) {
+                public void onResult(List<String> urls) {
                     Toast.makeText(MatisserSampleActivity.this, "handleRequest", Toast.LENGTH_SHORT).show();
                     Log.i("OnActivityResult ", "onHandle urls:" + urls);
                 }

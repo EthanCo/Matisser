@@ -7,7 +7,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.heiko.matisser.Responsibility;
+import com.heiko.matisser.Matter;
+import com.heiko.matisser.Transactor;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -20,32 +21,24 @@ import java.util.Map;
  * @author Heiko
  * @date 2019/5/15
  */
-public class UcopRRRR extends Responsibility {
+public class UcopTransactor extends Transactor {
     public static final int BASE_REQUEST_CODE = 35960;
-    private Map<Integer, String> resultPaths = new HashMap<>();
+    private Map<Integer, Matter> matters = new HashMap<>();
     private Map<Integer, String> targetPaths = new HashMap<>();
-    private Map<Integer, String> types = new HashMap<>();
 
     @Override
-    public void handleRequest(String type, int position, String request, Activity activity) {
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                LoadingDialog.dismiss();
-            }
-        }, 1000);*/
-        Log.i("OnActivityResult", "handleRequest>>> request:" + request);
-        File requestFile = new File(request);
-        File targetFile = new File(getCachePath(activity), position + requestFile.getName());
+    public void handle(Matter matter, Activity activity) {
+        Log.i("OnActivityResult", "handleRequest>>> request:" + matter.getRequest());
+        File requestFile = new File(matter.getRequest());
+        File targetFile = new File(getCachePath(activity), matter.getPosition() + requestFile.getName());
         Uri resultUri = Uri.fromFile(requestFile);
         Uri targetUri = Uri.fromFile(targetFile);
-        resultPaths.put(position, request);
-        targetPaths.put(position, targetFile.getPath());
-        types.put(position, type);
+        matters.put(matter.getPosition(), matter);
+        targetPaths.put(matter.getPosition(), targetFile.getPath());
         UCrop.of(resultUri, targetUri)
                 .withAspectRatio(9, 16)
                 .withMaxResultSize(648, 1152)
-                .start(activity, BASE_REQUEST_CODE + position);
+                .start(activity, BASE_REQUEST_CODE + matter.getPosition());
     }
 
     @Override
@@ -53,18 +46,18 @@ public class UcopRRRR extends Responsibility {
         Log.i("OnActivityResult", "onActivityResult>>> requestCode:" + requestCode);
         int position = requestCode - BASE_REQUEST_CODE;
         if (position >= 0 && (position) <= 9) {
-            String type = types.get(position);
+            Matter matter = matters.get(position);
             if (resultCode == Activity.RESULT_OK) {
                 final Uri resultUri = UCrop.getOutput(data);
                 Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
                 String targetPath = targetPaths.get(position);
-                getNext().handleRequest(type, position, targetPath, activity);
+                matter.setRequest(targetPath);
+                getNext().handle(matter, activity);
                 return true;
             } else if (resultCode == UCrop.RESULT_ERROR) {
                 final Throwable cropError = UCrop.getError(data);
                 Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
-                String resultPath = resultPaths.get(position);
-                getNext().handleRequest(type, position, resultPath, activity);
+                getNext().handle(matter, activity);
                 return true;
             } else {
                 return super.onActivityResult(activity, requestCode, resultCode, data);

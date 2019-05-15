@@ -5,7 +5,8 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.heiko.matisser.Responsibility;
+import com.heiko.matisser.Matter;
+import com.heiko.matisser.Transactor;
 
 import java.io.File;
 
@@ -19,11 +20,11 @@ import top.zibin.luban.OnCompressListener;
  * @author Heiko
  * @date 2019/5/15
  */
-public class LubanRRRR extends Responsibility {
+public class LubanTransactor extends Transactor {
 
     @Override
-    public void handleRequest(final String type, final int position, final String request, final Activity activity) {
-        File file = new File(request);
+    public void handle(final Matter matter, final Activity activity) {
+        final File file = new File(matter.getRequest());
         Log.i("OnActivityResult ", "file.size:" + file.length());
         Luban.with(activity)
                 .load(file)
@@ -38,21 +39,22 @@ public class LubanRRRR extends Responsibility {
                 .setCompressListener(new OnCompressListener() {
                     @Override
                     public void onStart() {
-                        // TODO 压缩开始前调用，可以在方法内启动 loading UI
+                        // 压缩开始前调用，可以在方法内启动 loading UI
                     }
 
                     @Override
                     public void onSuccess(File file) {
-                        // TODO 压缩成功后调用，返回压缩后的图片文件
+                        // 压缩成功后调用，返回压缩后的图片文件
                         Log.i("OnActivityResult", "Luban压缩成功:" + file.toString() + " file.size:" + file.length());
-                        getNext().handleRequest(type, position, file.getPath(), activity);
+                        matter.setRequest(file.getPath());
+                        getNext().handle(matter, activity);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        // TODO 当压缩过程出现问题时调用
+                        // 当压缩过程出现问题时调用
                         Log.e("OnActivityResult", "Luban压缩失败:" + e.getMessage());
-                        getNext().handleRequest(type, position, request, activity);
+                        getNext().handle(matter, activity);
                     }
                 }).launch();
     }

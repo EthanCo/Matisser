@@ -16,8 +16,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Matisser.addHandler(new UcopRRRR());
-        Matisser.addHandler(new LubanRRRR());
-        //Matisser.addHandler(new UcopRRRR2());
+        Matisser.addTransactor(new UcopTransactor());
+        Matisser.addTransactor(new LubanTransactor());
     }
 }
