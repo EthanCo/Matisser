@@ -31,16 +31,22 @@ public class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
 
     @Override
     public void onBindViewHolder(UriViewHolder holder, int position) {
-        holder.mUri.setText(mUris.get(position).toString());
+        if (mUris != null) {
+            holder.mUri.setText(mUris.get(position).toString());
+        }else{
+            holder.mUri.setText("");
+        }
         holder.mPath.setText(mPaths.get(position));
 
-        holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
+        if (mUris != null) {
+            holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
+        }
         holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
     }
 
     @Override
     public int getItemCount() {
-        return mUris == null ? 0 : mUris.size();
+        return mPaths == null ? 0 : mPaths.size();
     }
 
     static class UriViewHolder extends RecyclerView.ViewHolder {

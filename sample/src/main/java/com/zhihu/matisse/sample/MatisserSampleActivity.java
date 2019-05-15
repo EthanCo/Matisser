@@ -16,7 +16,6 @@ import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -65,22 +64,14 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
 
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             List<String> paths = Matisser.obtainPathResult(data);
-            mAdapter.setData(Matisser.obtainResult(data), paths);
             Log.i("OnActivityResult ", String.valueOf(Matisser.obtainOriginalState(data)));
-            Log.i("OnActivityResult ", "paths[0]:" + paths.get(0));
 
-            File file = new File(paths.get(0));
-            if (!file.exists()) {
-                Toast.makeText(MatisserSampleActivity.this, "文件不存在", Toast.LENGTH_SHORT).show();
-                return;
-            } else {
-                Log.i("OnActivityResult ", "file.size:" + file.length());
-            }
             Matisser.handleResult(this,"sample", paths, new Matisser.HandleResult() {
                 @Override
                 public void onResult(List<String> urls) {
                     Toast.makeText(MatisserSampleActivity.this, "handleRequest", Toast.LENGTH_SHORT).show();
                     Log.i("OnActivityResult ", "onHandle urls:" + urls);
+                    mAdapter.setData(null, urls);
                 }
             });
 
