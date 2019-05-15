@@ -1,7 +1,7 @@
 package com.zhihu.matisse.sample;
 
 
-import android.content.Context;
+import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,13 +22,13 @@ import top.zibin.luban.OnCompressListener;
 public class LubanRRRR extends Responsibility {
 
     @Override
-    public void handleRequest(final String request, final Context context) {
+    public void handleRequest(final String request, final Activity activity) {
         File file = new File(request);
         Log.i("OnActivityResult ", "file.size:" + file.length());
-        Luban.with(context)
+        Luban.with(activity)
                 .load(file)
                 .ignoreBy(100)
-                .setTargetDir(context.getExternalCacheDir().toString())
+                .setTargetDir(activity.getExternalCacheDir().toString())
                 .filter(new CompressionPredicate() {
                     @Override
                     public boolean apply(String path) {
@@ -45,14 +45,14 @@ public class LubanRRRR extends Responsibility {
                     public void onSuccess(File file) {
                         // TODO 压缩成功后调用，返回压缩后的图片文件
                         Log.i("OnActivityResult", "Luban压缩成功:" + file.toString() + " file.size:" + file.length());
-                        getNext().handleRequest(file.getPath(), context);
+                        getNext().handleRequest(file.getPath(), activity);
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         // TODO 当压缩过程出现问题时调用
                         Log.e("OnActivityResult", "Luban压缩失败:" + e.getMessage());
-                        getNext().handleRequest(request, context);
+                        getNext().handleRequest(request, activity);
                     }
                 }).launch();
     }

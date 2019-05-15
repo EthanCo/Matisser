@@ -1,6 +1,6 @@
 package com.heiko.matisser;
 
-import android.content.Context;
+import android.app.Activity;
 
 public abstract class Responsibility {
     private Responsibility next;
@@ -14,5 +14,5 @@ public abstract class Responsibility {
     }
 
     //处理请求的方法
-    public abstract void handleRequest(String request, Context context);
+    public abstract void handleRequest(String request, Activity activity);
 }

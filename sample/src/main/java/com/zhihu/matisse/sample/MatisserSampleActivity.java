@@ -1,8 +1,11 @@
 package com.zhihu.matisse.sample;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 
 import com.heiko.matisser.Matisser;
 import com.heiko.matisser.Responsibility;
+import com.yalantis.ucrop.UCrop;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
@@ -75,12 +79,57 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
             }
             Matisser.handleResult(this, paths.get(0), new Responsibility() {
                 @Override
-                public void handleRequest(String request, Context context) {
+                public void handleRequest(String request, Activity activity) {
                     File file = new File(request);
                     Log.i("OnActivityResult", "handleRequest:" + request + " file.size:" + file.length());
                     Toast.makeText(MatisserSampleActivity.this, "handleRequest", Toast.LENGTH_SHORT).show();
                 }
             });
+
+           /* List<Uri> uris = Matisse.obtainResult(data);
+            final Uri resultUri = uris.get(0);
+            Log.i("OnActivityResult", "选择图片:" + resultUri.toString());
+            File file_temp = new File(getCachePath(this), "test_temp.jpeg");
+            if (!file_temp.exists()) {
+                file_temp.mkdir();
+            }
+            //文件不存在判断
+            Uri targetFile = Uri.parse(file_temp.toString());
+            UCrop.Options options = new UCrop.Options();
+            //options.setCompressionFormat(Bitmap.CompressFormat.WEBP);
+            //options.setCircleDimmedLayer(true);
+            UCrop.of(resultUri, targetFile)
+//                    .withAspectRatio(16, 9)
+//                    .withMaxResultSize(900, 1600)
+                    .withAspectRatio(4, 3)
+                    //.withMaxResultSize(1600,1200)
+                    .withMaxResultSize(2304, 1728)
+                    .withOptions(options)
+                    .start(this);*/
+        } else if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            final Uri resultUri = UCrop.getOutput(data);
+            Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            final Throwable cropError = UCrop.getError(data);
+            Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
         }
+    }
+
+    /**
+     * 获取app缓存路径
+     * @param context
+     * @return
+     */
+    public String getCachePath( Context context ){
+        String cachePath ;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            //外部存储可用
+            cachePath = context.getExternalCacheDir().getPath() ;
+        }else {
+            //外部存储不可用
+            cachePath = context.getCacheDir().getPath() ;
+        }
+        return cachePath ;
     }
 }

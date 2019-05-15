@@ -16,5 +16,6 @@ public class App extends Application {
         super.onCreate();
 
         Matisser.addHandler(new LubanRRRR());
+        Matisser.addHandler(new UcopRRRR());
     }
 }
