@@ -152,7 +152,7 @@ public class Matisser {
         void onHandle(List<String> urls);
     }
 
-    public static void handleResult(Activity activity, final List<String> urls, final ResultH onhandle) {
+    public static void handleResult(Activity activity, String type, final List<String> urls, final ResultH onhandle) {
         if (urls == null) return;
         final String[] resultUrls = new String[urls.size()];
         final int[] resultCount = new int[]{0};
@@ -163,7 +163,7 @@ public class Matisser {
             final Responsibility operateResponsibility = responsibility.getNext() == null ? responsibility : responsibilityNext;
             operateResponsibility.setNext(new Responsibility() {
                 @Override
-                public void handleRequest(int index, String request, Activity activity) {
+                public void handleRequest(String type, int index, String request, Activity activity) {
                     resultCount[0]++;
                     resultUrls[index] = request;
                     if (resultCount[0] >= resultUrls.length) {
@@ -173,7 +173,7 @@ public class Matisser {
                 }
             });
             for (int i = 0; i < urls.size(); i++) {
-                responsibility.handleRequest(i, urls.get(i), activity);
+                responsibility.handleRequest(type, i, urls.get(i), activity);
             }
         }
     }

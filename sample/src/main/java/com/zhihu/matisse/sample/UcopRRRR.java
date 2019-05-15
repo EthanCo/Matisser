@@ -24,9 +24,10 @@ public class UcopRRRR extends Responsibility {
     public static final int BASE_REQUEST_CODE = 35960;
     private Map<Integer, String> resultPaths = new HashMap<>();
     private Map<Integer, String> targetPaths = new HashMap<>();
+    private Map<Integer, String> types = new HashMap<>();
 
     @Override
-    public void handleRequest(int position, String request, Activity activity) {
+    public void handleRequest(String type, int position, String request, Activity activity) {
         /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -40,8 +41,9 @@ public class UcopRRRR extends Responsibility {
         Uri targetUri = Uri.fromFile(targetFile);
         resultPaths.put(position, request);
         targetPaths.put(position, targetFile.getPath());
+        types.put(position, type);
         UCrop.of(resultUri, targetUri)
-                .withAspectRatio(9,16)
+                .withAspectRatio(9, 16)
                 .withMaxResultSize(648, 1152)
                 .start(activity, BASE_REQUEST_CODE + position);
     }
@@ -51,17 +53,18 @@ public class UcopRRRR extends Responsibility {
         Log.i("OnActivityResult", "onActivityResult>>> requestCode:" + requestCode);
         int position = requestCode - BASE_REQUEST_CODE;
         if (position >= 0 && (position) <= 9) {
+            String type = types.get(position);
             if (resultCode == Activity.RESULT_OK) {
                 final Uri resultUri = UCrop.getOutput(data);
                 Log.i("OnActivityResult", "裁剪成功:" + resultUri.toString());
                 String targetPath = targetPaths.get(position);
-                getNext().handleRequest(position, targetPath, activity);
+                getNext().handleRequest(type, position, targetPath, activity);
                 return true;
             } else if (resultCode == UCrop.RESULT_ERROR) {
                 final Throwable cropError = UCrop.getError(data);
                 Log.e("OnActivityResult", "裁剪失败:" + cropError.getMessage());
                 String resultPath = resultPaths.get(position);
-                getNext().handleRequest(position, resultPath, activity);
+                getNext().handleRequest(type, position, resultPath, activity);
                 return true;
             } else {
                 return super.onActivityResult(activity, requestCode, resultCode, data);
