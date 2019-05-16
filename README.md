@@ -6,8 +6,11 @@
 - 支持扩展，比如图片压缩、图片裁剪等，一个类搞定  
 
 ### 如何使用
+1.实现Matisse的配置
 
-1.将`Matisse.from(context)`替换为`Matisser.from(context)`
+详见 [Matisse](https://github.com/zhihu/Matisse)
+
+2.将`Matisse.from(context)`替换为`Matisser.from(context)`
 
 	Matisser.from(MatisserSampleActivity.this)
         .choose(MimeType.ofImage())
@@ -20,7 +23,7 @@
         .imageEngine(new PicassoEngine())
         .forResult(REQUEST_CODE_CHOOSE);
 
-2.实现onActivityResult
+3.实现onActivityResult
 
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
