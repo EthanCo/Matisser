@@ -16,6 +16,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.EthanCo'
+
 android {
     compileSdkVersion 27
 
