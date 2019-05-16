@@ -19,9 +19,8 @@ import java.util.Set;
  * @date 2019/5/14
  */
 public class Matisser {
-    public static final int REQUEST_PERMISSION = 1288;
+    public static final int REQUEST_CODE = 12768;
     private Matisse impl;
-
 
     private Matisser(Activity activity) {
         impl = Matisse.from(activity);
@@ -150,13 +149,13 @@ public class Matisser {
         void onResult(List<String> urls);
     }
 
-    public static void handleResult(Activity activity, String type, final List<String> urls, final HandleResult handleResult) {
-        if (urls == null) return;
-        final String[] resultUrls = new String[urls.size()];
+    public static void handleResult(Activity activity, String type, final List<String> paths, final HandleResult handleResult) {
+        if (paths == null) return;
+        final String[] resultUrls = new String[paths.size()];
         final int[] resultCount = new int[]{0};
 
         if (transactor == null) {
-            handleResult.onResult(urls);
+            handleResult.onResult(paths);
         } else {
             final Transactor operateTransactor = transactor.getNext() == null ? transactor : transactorNext;
             operateTransactor.setNext(new Transactor() {
@@ -171,8 +170,8 @@ public class Matisser {
                 }
             });
             Matter matter;
-            for (int i = 0; i < urls.size(); i++) {
-                matter = new Matter(i, urls.get(i), type);
+            for (int i = 0; i < paths.size(); i++) {
+                matter = new Matter(i, paths.get(i), type);
                 transactor.handle(matter, activity);
             }
         }
