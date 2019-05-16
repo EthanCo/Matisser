@@ -1,9 +1,7 @@
 package com.zhihu.matisse.sample;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,46 +72,6 @@ public class MatisserSampleActivity extends AppCompatActivity implements View.On
                     mAdapter.setData(null, urls);
                 }
             });
-
-           /* List<Uri> uris = Matisse.obtainResult(data);
-            final Uri resultUri = uris.get(0);
-            Log.i("OnActivityResult", "选择图片:" + resultUri.toString());
-            File file_temp = new File(getCachePath(this), "test_temp.jpeg");
-            if (!file_temp.exists()) {
-                file_temp.mkdir();
-            }
-            //文件不存在判断
-            Uri targetFile = Uri.parse(file_temp.toString());
-            UCrop.Options options = new UCrop.Options();
-            //options.setCompressionFormat(Bitmap.CompressFormat.WEBP);
-            //options.setCircleDimmedLayer(true);
-            UCrop.of(resultUri, targetFile)
-//                    .withAspectRatio(16, 9)
-//                    .withMaxResultSize(900, 1600)
-                    .withAspectRatio(4, 3)
-                    //.withMaxResultSize(1600,1200)
-                    .withMaxResultSize(2304, 1728)
-                    .withOptions(options)
-                    .start(this);*/
         }
-    }
-
-    /**
-     * 获取app缓存路径
-     *
-     * @param context
-     * @return
-     */
-    public String getCachePath(Context context) {
-        String cachePath;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
-            //外部存储可用
-            cachePath = context.getExternalCacheDir().getPath();
-        } else {
-            //外部存储不可用
-            cachePath = context.getCacheDir().getPath();
-        }
-        return cachePath;
     }
 }
