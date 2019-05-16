@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 <resources>
-    <string name="app_name">Matisse</string>
+    <string name="app_name">Matisser</string>
     <string name="permission_request_denied">İzin isteği  reddedildi</string>
     <string name="error_gif">x veya y\'ye bağlı boyut en az %1$ dpx olmalıdır Dosya boyutu %2$sM \'den daha fazla olmamalıdır</string>
 </resources>

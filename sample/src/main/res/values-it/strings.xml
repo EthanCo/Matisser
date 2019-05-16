@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 <resources>
-    <string name="app_name">Matisse</string>
+    <string name="app_name">Matisser</string>
     <string name="permission_request_denied">Richiesta di permessi negata</string>
     <string name="error_gif">Le dimensioni orizzontali o verticali devono essere di almeno %1$dpx e la dimensione del file non deve superare %2$sM</string>
 </resources>
