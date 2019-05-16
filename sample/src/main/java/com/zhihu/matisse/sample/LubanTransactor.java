@@ -15,7 +15,7 @@ import top.zibin.luban.Luban;
 import top.zibin.luban.OnCompressListener;
 
 /**
- * LubanRRRR
+ * 图片压缩
  *
  * @author Heiko
  * @date 2019/5/15

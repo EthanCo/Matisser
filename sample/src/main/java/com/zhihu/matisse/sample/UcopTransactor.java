@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * UcopRRRR
+ * 图片裁剪
  *
  * @author Heiko
  * @date 2019/5/15
