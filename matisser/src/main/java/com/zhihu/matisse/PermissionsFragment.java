@@ -1,4 +1,4 @@
-package com.heiko.matisser;
+package com.zhihu.matisse;
 
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;

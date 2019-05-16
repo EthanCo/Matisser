@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * Entry for Matisse's media selection.
  */
-public final class Matisse {
+class Matisse {
 
     private final WeakReference<Activity> mContext;
     private final WeakReference<Fragment> mFragment;

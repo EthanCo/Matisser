@@ -2,7 +2,7 @@ package com.zhihu.matisse.sample;
 
 import android.app.Application;
 
-import com.heiko.matisser.Matisser;
+import com.zhihu.matisse.Matisser;
 
 /**
  * App

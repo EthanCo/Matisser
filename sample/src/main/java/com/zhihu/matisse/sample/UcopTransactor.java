@@ -7,8 +7,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-import com.heiko.matisser.Matter;
-import com.heiko.matisser.Transactor;
+import com.zhihu.matisse.Matter;
+import com.zhihu.matisse.Transactor;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;

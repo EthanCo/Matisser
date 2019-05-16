@@ -1,4 +1,4 @@
-package com.heiko.matisser;
+package com.zhihu.matisse;
 
 import android.Manifest;
 import android.os.Build;
@@ -7,10 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.SelectionCreator;
 
 import java.util.Set;
 

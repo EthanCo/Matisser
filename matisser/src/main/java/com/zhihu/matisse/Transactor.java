@@ -1,4 +1,4 @@
-package com.heiko.matisser;
+package com.zhihu.matisse;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.heiko.matisser;
+package com.zhihu.matisse;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.ui.MatisseActivity;
 
 import java.util.Arrays;

@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.heiko.matisser.Matisser;
+import com.zhihu.matisse.Matisser;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;

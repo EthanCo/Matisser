@@ -17,27 +17,14 @@ package com.zhihu.matisse.sample;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.zhihu.matisse.Matisse;
-import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.PicassoEngine;
-import com.zhihu.matisse.filter.Filter;
-import com.zhihu.matisse.internal.entity.CaptureStrategy;
-import com.zhihu.matisse.listener.OnCheckedListener;
-import com.zhihu.matisse.listener.OnSelectedListener;
-
-import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -78,7 +65,7 @@ public class MatisseSampleActivity extends AppCompatActivity implements View.OnC
                         if (aBoolean) {
                             switch (v.getId()) {
                                 case R.id.zhihu:
-                                    Matisse.from(MatisseSampleActivity.this)
+                                    /*Matisse.from(MatisseSampleActivity.this)
                                             .choose(MimeType.ofAll(), false)
                                             .countable(true)
                                             .capture(true)
@@ -111,10 +98,10 @@ public class MatisseSampleActivity extends AppCompatActivity implements View.OnC
                                                     Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                                                 }
                                             })
-                                            .forResult(REQUEST_CODE_CHOOSE);
+                                            .forResult(REQUEST_CODE_CHOOSE);*/
                                     break;
                                 case R.id.dracula:
-                                    Matisse.from(MatisseSampleActivity.this)
+                                    /*Matisse.from(MatisseSampleActivity.this)
                                             .choose(MimeType.ofImage())
                                             .theme(R.style.Matisse_Dracula)
                                             .countable(false)
@@ -123,7 +110,7 @@ public class MatisseSampleActivity extends AppCompatActivity implements View.OnC
                                             .originalEnable(true)
                                             .maxOriginalSize(10)
                                             .imageEngine(new PicassoEngine())
-                                            .forResult(REQUEST_CODE_CHOOSE);
+                                            .forResult(REQUEST_CODE_CHOOSE);*/
                                     break;
                                 default:
                                     break;
@@ -151,8 +138,8 @@ public class MatisseSampleActivity extends AppCompatActivity implements View.OnC
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
-            Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
+            /*mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
+            Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));*/
         }
     }
 }
