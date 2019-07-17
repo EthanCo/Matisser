@@ -8,7 +8,7 @@
 ### 如何使用
 1.实现Matisse的配置
 
-详见 [Matisse](https://github.com/zhihu/Matisse)
+详见 [Matisse](https://github.com/zhihu/Matisse)  
 其中，依赖替换为如下的依赖  
 
 	dependencies {
