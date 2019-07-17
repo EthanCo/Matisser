@@ -9,6 +9,12 @@
 1.实现Matisse的配置
 
 详见 [Matisse](https://github.com/zhihu/Matisse)
+其中，依赖替换为如下的依赖  
+
+	dependencies {
+		implementation 'com.github.EthanCo.Matisser:matisse:1.0.2'
+		implementation 'com.github.EthanCo.Matisser:matisser:1.0.2'
+	}
 
 2.将`Matisse.from(context)`替换为`Matisser.from(context)`
 
